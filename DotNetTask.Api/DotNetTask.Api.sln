@@ -5,6 +5,10 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetTask.Api", "DotNetTask.Api.csproj", "{2BB63B93-2CD7-4923-A9EB-7D1A1FFAEE11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetTask.Models", "..\DotNetTask.Models\DotNetTask.Models.csproj", "{34938F23-F62E-4D61-A7C9-8A9EB2314480}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetTask.Services", "..\DotNetTask.Services\DotNetTask.Services.csproj", "{5080F192-2033-4A41-8516-7B9C1874935E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{2BB63B93-2CD7-4923-A9EB-7D1A1FFAEE11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BB63B93-2CD7-4923-A9EB-7D1A1FFAEE11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BB63B93-2CD7-4923-A9EB-7D1A1FFAEE11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34938F23-F62E-4D61-A7C9-8A9EB2314480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34938F23-F62E-4D61-A7C9-8A9EB2314480}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34938F23-F62E-4D61-A7C9-8A9EB2314480}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34938F23-F62E-4D61-A7C9-8A9EB2314480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5080F192-2033-4A41-8516-7B9C1874935E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5080F192-2033-4A41-8516-7B9C1874935E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5080F192-2033-4A41-8516-7B9C1874935E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5080F192-2033-4A41-8516-7B9C1874935E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
