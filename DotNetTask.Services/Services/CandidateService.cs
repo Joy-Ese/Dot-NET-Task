@@ -26,8 +26,25 @@ namespace DotNetTask.Services.Services
             ResponseModel respModel = new ResponseModel();
             try
             {
+                // dynamically add the id
+                int lastId = 0;
+                int newId = 0;
+
+                var lastCandidate = _container.GetItemLinqQueryable<Candidates>().OrderByDescending(d => d.Id).FirstOrDefault();
+                if (lastCandidate != null)
+                {
+                    lastId = int.Parse(lastCandidate.Id);
+                    newId = lastId + 1;
+                }
+                else
+                {
+                    newId = 1;
+                }
+
+
                 Candidates newCandidate = new Candidates
                 {
+                    Id = newId.ToString(),
                     First_Name = req.firstName,
                     Last_Name = req.lastName,
                     Email = req.email,
@@ -41,19 +58,32 @@ namespace DotNetTask.Services.Services
                 ItemResponse<Candidates> response = await _container.CreateItemAsync(newCandidate);
                 var savedCandidate = response.Resource;
 
-                _logger.LogInformation($"Successfully created Candidate ----------- {savedCandidate} ---------------------");
+                _logger.LogInformation($"Successfully created a new Candidate ----------- {savedCandidate} ---------------------");
 
                 foreach (var item in req.additionals)
                 {
+                    // dynamically add the id
+                    var lastCandidateQuest = _container.GetItemLinqQueryable<CandidateQuestions>().OrderByDescending(d => d.Id).FirstOrDefault();
+                    if (lastCandidateQuest != null)
+                    {
+                        lastId = int.Parse(lastCandidateQuest.Id);
+                        newId = lastId + 1;
+                    }
+                    else
+                    {
+                        newId = 1;
+                    }
+
+
                     CandidateQuestions newCandidateQuestion = new CandidateQuestions
                     {
+                        Id = newId.ToString(),
                         Candidate_UserId = savedCandidate.Id,
                         Question = item.question,
                         Answer = item.answer
                     };
                     ItemResponse<CandidateQuestions> response2 = await _container2.CreateItemAsync(newCandidateQuestion);
                 }
-
 
                 respModel.status = true;
                 respModel.message = $"Successfully added {savedCandidate.First_Name} as a candidate";
@@ -77,6 +107,9 @@ namespace DotNetTask.Services.Services
                 while (iterator1.HasMoreResults)
                 {
                     FeedResponse<Candidates> response1 = await iterator1.ReadNextAsync();
+
+                    _logger.LogInformation($"Successfully fetched Candidates from the DB ----------- {response1.Resource} -----------------");
+
                     foreach (var item in response1)
                     {
                         var candidate = new GetCandidatesViewModel();
@@ -98,6 +131,9 @@ namespace DotNetTask.Services.Services
                         while (iterator2.HasMoreResults)
                         {
                             FeedResponse<CandidateQuestions> response2 = await iterator2.ReadNextAsync();
+
+                            _logger.LogInformation($"Successfully fetched CandidateQuestions from the DB ----- {response2.Resource} ----------");
+
                             foreach (var item2 in response2)
                             {
                                 if (item.Id == item2.Candidate_UserId)
