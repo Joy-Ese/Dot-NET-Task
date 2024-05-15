@@ -28,4 +28,10 @@ namespace DotNetTask.Models.ViewModels
         public string gender { get; set; } = string.Empty;
         public List<AdditionalQuestions> additionals { get; set; }
     }
+
+    public class GetQuestionByTypeViewModel
+    {
+        public string quest { get; set; } = string.Empty;
+    }
+
 }

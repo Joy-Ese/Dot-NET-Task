@@ -1,4 +1,5 @@
-﻿using DotNetTask.Models.Containers;
+﻿using Azure;
+using DotNetTask.Models.Containers;
 using DotNetTask.Models.DTOs;
 using DotNetTask.Models.ViewModels;
 using DotNetTask.Services.Interfaces;
@@ -12,6 +13,8 @@ namespace DotNetTask.Services.Services
         private readonly ILogger<CandidateService> _logger;
         private readonly Container _container;
         private readonly Container _container2;
+        private readonly Container _container3;
+        private readonly Container _container4;
 
         public CandidateService(ILogger<CandidateService> logger, CosmosClient cosmosClient)
         {
@@ -19,6 +22,8 @@ namespace DotNetTask.Services.Services
             _logger.LogDebug(1, "Nlog injected into the CandidateService");
             _container = cosmosClient.GetContainer("DotNetTaskDB", "Candidates");
             _container2 = cosmosClient.GetContainer("DotNetTaskDB", "CandidateQuestions");
+            _container3 = cosmosClient.GetContainer("DotNetTaskDB", "CustomQuestions");
+            _container4 = cosmosClient.GetContainer("DotNetTaskDB", "NewPrograms");
         }
 
         public async Task<ResponseModel> AddCandidate(NewCandidate req)
@@ -87,6 +92,86 @@ namespace DotNetTask.Services.Services
 
                 respModel.status = true;
                 respModel.message = $"Successfully added {savedCandidate.First_Name} as a candidate";
+                return respModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                return respModel;
+            }
+        }
+
+        public async Task<ResponseModel> AddCustomQuestion(NewQuestion req)
+        {
+            ResponseModel respModel = new ResponseModel();
+            try
+            {
+                int lastId = 0;
+                int newId = 0;
+
+                var lastCustQues = _container3.GetItemLinqQueryable<CustomQuestions>().OrderByDescending(d => d.Id).FirstOrDefault();
+                if (lastCustQues != null)
+                {
+                    lastId = int.Parse(lastCustQues.Id);
+                    newId = lastId + 1;
+                }
+                else
+                {
+                    newId = 1;
+                }
+
+                CustomQuestions newCustQuest = new CustomQuestions
+                {
+                    Id = newId.ToString(),
+                    Type = req.type,
+                    Question = req.quest
+                };
+                ItemResponse<CustomQuestions> response = await _container3.CreateItemAsync(newCustQuest);
+
+                _logger.LogInformation($"Successfully created a new Custom Question ----------- {response.Resource} ---------------------");
+
+                respModel.status = true;
+                respModel.message = $"Successful";
+                return respModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                return respModel;
+            }
+        }
+
+        public async Task<ResponseModel> AddNewProgram(NewProgram req)
+        {
+            ResponseModel respModel = new ResponseModel();
+            try
+            {
+                int lastId = 0;
+                int newId = 0;
+
+                var lastProg = _container4.GetItemLinqQueryable<NewPrograms>().OrderByDescending(d => d.Id).FirstOrDefault();
+                if (lastProg != null)
+                {
+                    lastId = int.Parse(lastProg.Id);
+                    newId = lastId + 1;
+                }
+                else
+                {
+                    newId = 1;
+                }
+
+                NewPrograms newProg = new NewPrograms
+                {
+                    Id = newId.ToString(),
+                    Program_Title = req.prog_Title,
+                    Program_Description = req.prog_Desc
+                };
+                ItemResponse<NewPrograms> response = await _container4.CreateItemAsync(newProg);
+
+                _logger.LogInformation($"Successfully created a new Program ----------- {response.Resource} ---------------------");
+
+                respModel.status = true;
+                respModel.message = $"Successful";
                 return respModel;
             }
             catch (Exception ex)
@@ -171,6 +256,51 @@ namespace DotNetTask.Services.Services
                 };
             }
         }
+
+        public async Task<GetEndpointsResponseModel<List<GetQuestionByTypeViewModel>>> GetQuestionByType(string type)
+        {
+            var listOfQuesByType = new List<GetQuestionByTypeViewModel>();
+            try
+            {
+                FeedIterator<CustomQuestions> iterator = _container3.GetItemQueryIterator<CustomQuestions>();
+                
+                while (iterator.HasMoreResults)
+                {
+                    FeedResponse<CustomQuestions> questions = await iterator.ReadNextAsync();
+
+                    _logger.LogInformation($"Successfully fetched Custom Questions from the DB --------- {questions.Resource} --------");
+
+                    foreach (var item in questions)
+                    {
+                        if (item.Type.Equals(type, StringComparison.OrdinalIgnoreCase))
+                        {
+                            var getQuestion = new GetQuestionByTypeViewModel();
+                            getQuestion.quest = item.Question;
+
+                            listOfQuesByType.Add(getQuestion);
+                        }
+                    };
+                }
+
+                return new GetEndpointsResponseModel<List<GetQuestionByTypeViewModel>>
+                {
+                    status = true,
+                    message = "Successful",
+                    result = listOfQuesByType
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                return new GetEndpointsResponseModel<List<GetQuestionByTypeViewModel>>
+                {
+                    status = false,
+                    message = "Failed",
+                    result = listOfQuesByType
+                };
+            }
+        }
+
 
     }
 }

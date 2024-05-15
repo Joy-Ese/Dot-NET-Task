@@ -22,10 +22,31 @@ namespace DotNetTask.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPost("AddNewCustomQuestion")]
+        public async Task<IActionResult> AddCustomQuestion([FromBody] NewQuestion req)
+        {
+            var result = await _candidateService.AddCustomQuestion(req);
+            return Ok(result);
+        }
+
+        [HttpPost("AddNewProgram")]
+        public async Task<IActionResult> AddNewProgram([FromBody] NewProgram req)
+        {
+            var result = await _candidateService.AddNewProgram(req);
+            return Ok(result);
+        }
+
         [HttpGet("GetAllCandidates")]
         public async Task<IActionResult> GetAllCandidates()
         {
             var result = await _candidateService.GetAllCandidates();
+            return Ok(result);
+        }
+
+        [HttpGet("GetQuestionByType")]
+        public async Task<IActionResult> GetQuestionByType(string type)
+        {
+            var result = await _candidateService.GetQuestionByType(type);
             return Ok(result);
         }
 
