@@ -97,6 +97,8 @@ namespace DotNetTask.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                respModel.status = false;
+                respModel.message = "Failed";
                 return respModel;
             }
         }
@@ -137,6 +139,8 @@ namespace DotNetTask.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                respModel.status = false;
+                respModel.message = "Failed";
                 return respModel;
             }
         }
@@ -177,6 +181,8 @@ namespace DotNetTask.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                respModel.status = false;
+                respModel.message = "Failed";
                 return respModel;
             }
         }
@@ -301,6 +307,48 @@ namespace DotNetTask.Services.Services
             }
         }
 
+        public async Task<ResponseModel> UpdateCandidateQuestion(string id, string quest) 
+        {
+            ResponseModel respModel = new ResponseModel();
+            try
+            {
+                var query = _container2.GetItemLinqQueryable<CandidateQuestions>().Where(d => d.Candidate_UserId == id)
+                    .OrderByDescending(d => d.Id).Take(1);
+
+                var lastAddedQuestion = query.FirstOrDefault();
+
+                if (lastAddedQuestion == null)
+                {
+                    respModel.status = false;
+                    respModel.message = "User's Record does not exist!";
+                    return respModel;
+                }
+
+                lastAddedQuestion.Question = quest;
+
+                var response = await _container2.ReplaceItemAsync(lastAddedQuestion, lastAddedQuestion.Id);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    respModel.status = true;
+                    respModel.message = "User's Question updated successfully!";
+                }
+                else
+                {
+                    respModel.status = false;
+                    respModel.message = "Failed to update User's Question!";
+                }
+
+                return respModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURRED... => {ex.Message}");
+                respModel.status = false;
+                respModel.message = "Failed";
+                return respModel;
+            }
+        }
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DotNetTask.Models.DTOs;
 using DotNetTask.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetTask.Api.Controllers
@@ -50,5 +51,11 @@ namespace DotNetTask.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPut("UpdateCandidateQuestion")]
+        public async Task<IActionResult> UpdateCandidateQuestion(string id, string quest)
+        {
+            var result = await _candidateService.UpdateCandidateQuestion(id, quest);
+            return Ok(result);
+        }
     }
 }

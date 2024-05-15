@@ -10,5 +10,6 @@ namespace DotNetTask.Services.Interfaces
         Task<ResponseModel> AddNewProgram(NewProgram req);
         Task<GetEndpointsResponseModel<List<GetCandidatesViewModel>>> GetAllCandidates();
         Task<GetEndpointsResponseModel<List<GetQuestionByTypeViewModel>>> GetQuestionByType(string type);
+        Task<ResponseModel> UpdateCandidateQuestion(string id, string quest);
     }
 }
