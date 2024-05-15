@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DotNetTask.Models\DotNetTask.Models.csproj" />
     <ProjectReference Include="..\DotNetTask.Services\DotNetTask.Services.csproj" />
   </ItemGroup>
